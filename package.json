@@ -1,16 +1,16 @@
 {
-    "name": "amana-dashboard",
-    "version": "1.0.0",
-    "description": "Amana Dashboard with Responsive Design and Interactivity",
-    "scripts": {
-      "dev": "vite",
-      "build": "vite build",
-      "serve": "vite preview"
-    },
-    "dependencies": {
-      "chart.js": "^4.4.2"
-    },
-    "devDependencies": {
-      "vite": "^5.1.4"
-    }
+  "name": "amana-dashboard",
+  "version": "1.0.0",
+  "description": "Amana Dashboard with Responsive Design and Interactivity",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.2"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4"
   }
+}

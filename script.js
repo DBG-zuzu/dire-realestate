@@ -9,14 +9,17 @@ import Chart from 'chart.js/auto';
       ];
 
       let currentCustomer = null;
+      let transactions = []; // Array to store transactions
 
       // DOM Elements
       const searchInput = document.getElementById('searchInput');
       const searchResults = document.getElementById('searchResults');
       const customerNameDisplay = document.getElementById('customerNameDisplay');
       const customerBalanceDisplay = document.getElementById('customerBalanceDisplay');
+      const lastTransactionDisplay = document.getElementById('lastTransactionDisplay'); // New line
       const editCustomerButton = document.getElementById('editCustomerButton');
-      const restoreCustomerButton = document.getElementById('restoreCustomerButton');
+      const clearDataButton = document.getElementById('clearDataButton');
+      const viewHistoryButton = document.getElementById('viewHistoryButton'); // New button
       const customerForm = document.getElementById('customerForm');
       const formTitle = document.getElementById('formTitle');
       const customerNameInput = document.getElementById('customerName');
@@ -39,6 +42,9 @@ import Chart from 'chart.js/auto';
       const totalTransfersDisplay = document.getElementById('totalTransfers');
       const transactionChartCanvas = document.getElementById('transactionChart');
       const orderForm = document.getElementById('orderForm');
+      const transactionHistoryList = document.getElementById('transactionHistoryList');
+      const transactionHistorySection = document.getElementById('transactionHistorySection');
+      const hideHistoryButton = document.getElementById('hideHistoryButton');
 
       // --- Search Functionality ---
       searchInput.addEventListener('input', () => {
@@ -76,6 +82,15 @@ import Chart from 'chart.js/auto';
         currentCustomer = customer;
         customerNameDisplay.textContent = customer.name;
         customerBalanceDisplay.textContent = `$${customer.balance.toFixed(2)}`;
+
+        // Find the last transaction for the selected customer
+        const lastTransaction = transactions.filter(transaction => transaction.customer === customer.name).pop();
+        if (lastTransaction) {
+          lastTransactionDisplay.textContent = `${lastTransaction.type}: $${lastTransaction.amount}`;
+        } else {
+          lastTransactionDisplay.textContent = 'N/A';
+        }
+
         showCustomerBalanceSection();
       }
 
@@ -123,6 +138,43 @@ import Chart from 'chart.js/auto';
         }
       });
 
+      clearDataButton.addEventListener('click', () => {
+        const confirmClear = confirm('Are you sure you want to clear all data? This action cannot be undone.');
+        if (confirmClear) {
+          // Clear customer data
+          customers.length = 0;
+          transactions.length = 0;
+
+          // Update display
+          updateCustomerBalanceList();
+          customerNameDisplay.textContent = '';
+          customerBalanceDisplay.textContent = '$0.00';
+          totalBalanceDisplay.textContent = '$0.00';
+          unpaidOrdersDisplay.textContent = '0';
+          totalTransactionsDisplay.textContent = '0';
+          lastTransactionDisplay.textContent = 'N/A'; // Clear last transaction
+
+          // Clear transaction table
+          transactionTableBody.innerHTML = '';
+          updateTransactionHistoryList();
+
+          // Reset chart
+          updateTransactionReport();
+
+          showMessage('All data cleared successfully!');
+        }
+      });
+
+      // Show transaction history
+      viewHistoryButton.addEventListener('click', () => {
+        transactionHistorySection.style.display = 'block';
+      });
+
+      // Hide transaction history
+      hideHistoryButton.addEventListener('click', () => {
+        transactionHistorySection.style.display = 'none';
+      });
+
       cancelEditButton.addEventListener('click', () => {
         clearForm();
         formTitle.textContent = 'Register Customer';
@@ -132,10 +184,25 @@ import Chart from 'chart.js/auto';
         document.querySelector('.form-container').style.display = 'none';
       });
 
-      registerButton.addEventListener('click', () => {
+      registerButton.addEventListener('click', (event) => {
+        event.preventDefault(); // Prevent form submission
+
+        const newCustomerName = customerNameInput.value;
+
+        // Check if customer already exists
+        const existingCustomer = customers.find(customer => customer.name === newCustomerName);
+
+        if (existingCustomer) {
+          showMessage('Customer already exists. Redirecting to add transaction.', true);
+          // Redirect to add transaction (you might need to adjust this part)
+          document.querySelector('.form-container').style.display = 'none'; // Hide the form
+          document.getElementById('transactionCustomer').value = newCustomerName; // Fill customer name in transaction form
+          return;
+        }
+
         const newCustomer = {
           id: customers.length + 1,
-          name: customerNameInput.value,
+          name: newCustomerName,
           contact: customerContactInput.value,
           email: customerEmailInput.value,
           address: customerAddressInput.value,
@@ -179,7 +246,7 @@ import Chart from 'chart.js/auto';
 
       function updateTotalTransactions() {
         // This is placeholder logic; replace with actual transaction count
-        totalTransactionsDisplay.textContent = '0';
+        totalTransactionsDisplay.textContent = transactions.length;
       }
 
       // --- Customer Balances List ---
@@ -196,27 +263,65 @@ import Chart from 'chart.js/auto';
       // --- Transaction Handling ---
       transactionForm.addEventListener('submit', (event) => {
         event.preventDefault();
-        const transactionCustomer = document.getElementById('transactionCustomer').value;
+        const transactionCustomerName = document.getElementById('transactionCustomer').value;
         const transactionType = document.getElementById('transactionType').value;
         const transactionMethod = document.getElementById('transactionMethod').value;
         const amount = parseFloat(document.getElementById('amount').value);
         const receiverName = document.getElementById('receiverName').value;
 
         // Basic validation
-        if (!transactionCustomer || isNaN(amount)) {
+        if (!transactionCustomerName || isNaN(amount)) {
           alert('Please fill out all required fields.');
           return;
+        }
+
+        // Find the customer
+        const transactionCustomer = customers.find(customer => customer.name === transactionCustomerName);
+
+        if (!transactionCustomer) {
+          alert('Customer not found.');
+          return;
+        }
+
+        // Update customer balance based on transaction type
+        switch (transactionType) {
+          case 'Deposit':
+            transactionCustomer.balance += amount;
+            break;
+          case 'Withdrawal':
+            if (transactionCustomer.balance < amount) {
+              alert('Insufficient balance.');
+              return;
+            }
+            transactionCustomer.balance -= amount;
+            break;
+          case 'Transfer':
+            const receiver = customers.find(customer => customer.name === receiverName);
+            if (!receiver) {
+              alert('Receiver not found.');
+              return;
+            }
+            if (transactionCustomer.balance < amount) {
+              alert('Insufficient balance for transfer.');
+              return;
+            }
+            transactionCustomer.balance -= amount;
+            receiver.balance += amount;
+            break;
         }
 
         // Create transaction object
         const newTransaction = {
           date: new Date().toLocaleDateString(),
-          customer: transactionCustomer,
+          customer: transactionCustomerName,
           type: transactionType,
           method: transactionMethod,
           amount: amount,
           receiver: receiverName,
         };
+
+        // Add transaction to the transactions array
+        transactions.push(newTransaction);
 
         // Add transaction to table
         addTransactionToTable(newTransaction);
@@ -224,8 +329,19 @@ import Chart from 'chart.js/auto';
         // Update transaction report
         updateTransactionReport();
 
+        // Update customer balance list and display
+        updateCustomerBalanceList();
+        customerBalanceDisplay.textContent = `$${transactionCustomer.balance.toFixed(2)}`;
+
+        // Update transaction history
+        updateTransactionHistoryList();
+
+        // Update last transaction display
+        lastTransactionDisplay.textContent = `${transactionType}: $${amount}`;
+
         // Clear form
         transactionForm.reset();
+        updateTotalTransactions();
       });
 
       function addTransactionToTable(transaction) {
@@ -243,14 +359,6 @@ import Chart from 'chart.js/auto';
         let totalDeposits = 0;
         let totalWithdrawals = 0;
         let totalTransfers = 0;
-
-        // Example data (replace with actual transaction data)
-        const transactions = [
-          { type: 'Deposit', amount: 100 },
-          { type: 'Withdrawal', amount: 50 },
-          { type: 'Transfer', amount: 25 },
-          { type: 'Deposit', amount: 75 },
-        ];
 
         transactions.forEach(transaction => {
           switch (transaction.type) {
@@ -312,10 +420,21 @@ import Chart from 'chart.js/auto';
         });
       }
 
+      // --- Transaction History ---
+      function updateTransactionHistoryList() {
+        transactionHistoryList.innerHTML = '';
+        transactions.forEach(transaction => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${transaction.date} - ${transaction.customer} - ${transaction.type} - $${transaction.amount}`;
+          transactionHistoryList.appendChild(listItem);
+        });
+      }
+
       // --- Initialize ---
       updateTotalBalance();
       updateUnpaidOrders();
       updateTotalTransactions();
       updateCustomerBalanceList();
       updateTransactionReport();
+      updateTransactionHistoryList();
     });

@@ -23,9 +23,11 @@
           <h2>Customer Details</h2>
           <p><strong>Name:</strong> <span id="customerNameDisplay"></span></p>
           <p><strong>Balance:</strong> <span id="customerBalanceDisplay">$0.00</span></p>
+          <p><strong>Last Transaction:</strong> <span id="lastTransactionDisplay">N/A</span></p> <!-- New line -->
           <div class="button-group">
             <button id="editCustomerButton">Edit Customer</button>
-            <button id="restoreCustomerButton">Restore Backup</button>
+            <button id="clearDataButton">Clear Data</button>
+            <button id="viewHistoryButton">View History</button> <!-- New button -->
           </div>
         </div>
 
@@ -84,7 +86,6 @@
           <ul id="customerBalanceList"></ul>
         </div>
 
-
         <!-- Transaction Form -->
         <div class="form-container">
           <h2>Add Transaction</h2>
@@ -115,8 +116,6 @@
             <!-- Button container -->
             <div class="button-container">
               <button type="submit">Add Transaction</button>
-              <button type="submit">Edit Transaction</button>
-              <button type="submit">Restore Transaction</button>
             </div>
           </form>
         </div>
@@ -139,6 +138,15 @@
               <!-- Rows will be added dynamically -->
             </tbody>
           </table>
+        </div>
+
+        <!-- Transaction History Section (Hidden by default) -->
+        <div id="transactionHistorySection" class="transaction-history" style="display: none;">
+          <h2>Transaction History</h2>
+          <ul id="transactionHistoryList">
+            <!-- Transaction history items will be added here -->
+          </ul>
+          <button id="hideHistoryButton">Hide History</button>
         </div>
 
         <!-- Report Section -->

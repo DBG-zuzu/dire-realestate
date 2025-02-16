@@ -263,9 +263,8 @@ header h1 {
   margin: 0 5px; /* Add some spacing between buttons */
 }
 
-/* Specific styling for Edit Customer and Restore Backup buttons */
-#editCustomerButton,
-#restoreCustomerButton {
+/* Specific styling for Edit Customer, Clear Data, and View History buttons */
+#editCustomerButton {
   background-color: #28a745; /* Green color */
   color: white;
   padding: 10px 15px;
@@ -276,7 +275,65 @@ header h1 {
   transition: background-color 0.3s ease;
 }
 
-#editCustomerButton:hover,
-#restoreCustomerButton:hover {
+#editCustomerButton:hover {
   background-color: #218838; /* Darker green on hover */
+}
+
+#clearDataButton {
+  background-color: #dc3545; /* Red color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+#clearDataButton:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+#viewHistoryButton {
+  background-color: #17a2b8; /* Info color */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+#viewHistoryButton:hover {
+  background-color: #138496; /* Darker info on hover */
+}
+
+/* Style for the transaction history section */
+.transaction-history {
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.transaction-history h2 {
+  color: #0056b3;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.transaction-history ul {
+  list-style: none;
+  padding: 0;
+}
+
+.transaction-history li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-history li:last-child {
+  border-bottom: none;
 }
