@@ -1,343 +1,321 @@
-// Data Storage
-let transactions = [];
-let customers = [];
-let orders = [];
+import Chart from 'chart.js/auto';
 
-// DOM Elements
-const customerForm = document.getElementById('customerForm');
-const orderForm = document.getElementById('orderForm');
-const transactionForm = document.getElementById('transactionForm');
-const transactionTable = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
-const totalBalance = document.getElementById('totalBalance');
-const unpaidOrders = document.getElementById('unpaidOrders');
-const totalTransactions = document.getElementById('totalTransactions');
-const searchInput = document.getElementById('searchInput');
-const totalDeposits = document.getElementById('totalDeposits');
-const totalWithdrawals = document.getElementById('totalWithdrawals');
-const totalTransfers = document.getElementById('totalTransfers');
-const ctx = document.getElementById('transactionChart').getContext('2d');
+    document.addEventListener('DOMContentLoaded', () => {
+      // Customer Data (Example)
+      const customers = [
+        { id: 1, name: 'John Doe', contact: '123-456-7890', balance: 1500 },
+        { id: 2, name: 'Jane Smith', contact: '987-654-3210', balance: 2200 },
+        { id: 3, name: 'Alice Johnson', contact: '555-123-4567', balance: 800 },
+      ];
 
-// Save customers to localStorage
-function saveCustomers() {
-  localStorage.setItem('customers', JSON.stringify(customers));
-}
+      let currentCustomer = null;
 
-// Load customers from localStorage
-function loadCustomers() {
-  const storedCustomers = localStorage.getItem('customers');
-  if (storedCustomers) {
-    customers = JSON.parse(storedCustomers);
-  }
-}
+      // DOM Elements
+      const searchInput = document.getElementById('searchInput');
+      const searchResults = document.getElementById('searchResults');
+      const customerNameDisplay = document.getElementById('customerNameDisplay');
+      const customerBalanceDisplay = document.getElementById('customerBalanceDisplay');
+      const editCustomerButton = document.getElementById('editCustomerButton');
+      const restoreCustomerButton = document.getElementById('restoreCustomerButton');
+      const customerForm = document.getElementById('customerForm');
+      const formTitle = document.getElementById('formTitle');
+      const customerNameInput = document.getElementById('customerName');
+      const customerContactInput = document.getElementById('customerContact');
+      const customerEmailInput = document.getElementById('customerEmail');
+      const customerAddressInput = document.getElementById('customerAddress');
+      const initialBalanceInput = document.getElementById('initialBalance');
+      const registerButton = document.getElementById('registerButton');
+      const updateCustomerButton = document.getElementById('updateCustomerButton');
+      const cancelEditButton = document.getElementById('cancelEditButton');
+      const messageDisplay = document.getElementById('message');
+      const totalBalanceDisplay = document.getElementById('totalBalance');
+      const unpaidOrdersDisplay = document.getElementById('unpaidOrders');
+      const totalTransactionsDisplay = document.getElementById('totalTransactions');
+      const customerBalanceList = document.getElementById('customerBalanceList');
+      const transactionForm = document.getElementById('transactionForm');
+      const transactionTableBody = document.getElementById('transactionTable').querySelector('tbody');
+      const totalDepositsDisplay = document.getElementById('totalDeposits');
+      const totalWithdrawalsDisplay = document.getElementById('totalWithdrawals');
+      const totalTransfersDisplay = document.getElementById('totalTransfers');
+      const transactionChartCanvas = document.getElementById('transactionChart');
+      const orderForm = document.getElementById('orderForm');
 
-// Register Customer
-customerForm.addEventListener('submit', (e) => {
-  e.preventDefault();
+      // --- Search Functionality ---
+      searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredCustomers = customers.filter(customer =>
+          customer.name.toLowerCase().includes(searchTerm) ||
+          customer.contact.includes(searchTerm)
+        );
+        displaySearchResults(filteredCustomers);
+      });
 
-  const name = document.getElementById('customerName').value;
-  const contact = document.getElementById('customerContact').value;
-  const email = document.getElementById('customerEmail').value;
-  const address = document.getElementById('customerAddress').value;
-  const balance = parseFloat(document.getElementById('initialBalance').value);
-
-  const customer = { name, contact, email, address, balance };
-  customers.push(customer);
-
-  // Save to localStorage
-  saveCustomers();
-
-  // Reset the form
-  customerForm.reset();
-
-  // Notify the user
-  alert('Customer registered successfully!');
-});
-
-// Add Order
-orderForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const supplierName = document.getElementById('supplierName').value;
-  const orderType = document.getElementById('orderType').value;
-  const orderAmount = parseFloat(document.getElementById('orderAmount').value);
-  const orderRate = parseFloat(document.getElementById('orderRate').value);
-  const paidAmount = parseFloat(document.getElementById('paidAmount').value);
-   // Customer Management System
-   let customers = [];
-   let backupCustomers = [];
-   let selectedCustomer = null;
-
-   // Form elements
-   const formTitle = document.getElementById('formTitle');
-   const registerButton = document.getElementById('registerButton');
-   const updateButton = document.getElementById('updateCustomerButton');
-   const cancelButton = document.getElementById('cancelEditButton');
-   const message = document.getElementById('message');
-
-   // Customer Search and Selection
-   const searchInput = document.getElementById('searchInput');
-   const searchResults = document.getElementById('searchResults');
-   const customerBalanceSection = document.getElementById('customerBalanceSection');
-   const customerNameDisplay = document.getElementById('customerNameDisplay');
-   const customerBalanceDisplay = document.getElementById('customerBalanceDisplay');
-
-   searchInput.addEventListener('input', function () {
-     const query = this.value.toLowerCase();
-     searchResults.innerHTML = '';
-
-     if (query.length > 0) {
-       const filteredCustomers = customers.filter(customer =>
-         customer.name.toLowerCase().includes(query) || customer.contact.includes(query)
-       );
-
-       filteredCustomers.forEach(customer => {
-         const div = document.createElement('div');
-         div.className = 'search-result-item';
-         div.textContent = `${customer.name} (${customer.contact}) - Balance: $${customer.balance.toFixed(2)}`;
-         div.addEventListener('click', () => selectCustomer(customer));
-         searchResults.appendChild(div);
-       });
-     }
-   });
-
-   function selectCustomer(customer) {
-     selectedCustomer = customer;
-     customerBalanceSection.style.display = 'block';
-     customerNameDisplay.textContent = customer.name;
-     customerBalanceDisplay.textContent = `$${customer.balance.toFixed(2)}`;
-   }
-
-   // Edit Customer
-   document.getElementById('editCustomerButton').addEventListener('click', () => {
-     if (!selectedCustomer) return;
-
-     // Populate form with customer data
-     document.getElementById('customerName').value = selectedCustomer.name;
-     document.getElementById('customerContact').value = selectedCustomer.contact;
-     document.getElementById('customerEmail').value = selectedCustomer.email;
-     document.getElementById('customerAddress').value = selectedCustomer.address;
-     document.getElementById('initialBalance').value = selectedCustomer.balance;
-
-     // Switch to edit mode
-     formTitle.textContent = 'Edit Customer';
-     registerButton.style.display = 'none';
-     updateButton.style.display = 'inline-block';
-     cancelButton.style.display = 'inline-block';
-   });
-
-   // Update Customer
-   updateButton.addEventListener('click', (e) => {
-     e.preventDefault();
-     if (!selectedCustomer) return;
-
-     // Update customer data
-     selectedCustomer.name = document.getElementById('customerName').value;
-     selectedCustomer.contact = document.getElementById('customerContact').value;
-     selectedCustomer.email = document.getElementById('customerEmail').value;
-     selectedCustomer.address = document.getElementById('customerAddress').value;
-     selectedCustomer.balance = parseFloat(document.getElementById('initialBalance').value);
-
-     showMessage('Customer updated successfully!', 'green');
-     resetForm();
-   });
-
-   // Restore Backup
-   document.getElementById('restoreCustomerButton').addEventListener('click', () => {
-     if (backupCustomers.length > 0) {
-       customers = [...backupCustomers];
-       showMessage('Last backup restored!', 'blue');
-     }
-   });
-
-   // Cancel Edit
-   cancelButton.addEventListener('click', resetForm);
-
-   // Register Customer
-   document.getElementById('customerForm').addEventListener('submit', (e) => {
-     e.preventDefault();
-
-     const customer = {
-       name: document.getElementById('customerName').value,
-       contact: document.getElementById('customerContact').value,
-       email: document.getElementById('customerEmail').value,
-       address: document.getElementById('customerAddress').value,
-       balance: parseFloat(document.getElementById('initialBalance').value),
-     };
-
-     customers.push(customer);
-     showMessage('Customer registered successfully!', 'green');
-     resetForm();
-   });
-
-   function resetForm() {
-     document.getElementById('customerForm').reset();
-     formTitle.textContent = 'Register Customer';
-     registerButton.style.display = 'inline-block';
-     updateButton.style.display = 'none';
-     cancelButton.style.display = 'none';
-     selectedCustomer = null;
-   }
-
-   function showMessage(text, color) {
-     message.style.color = color;
-     message.textContent = text;
-     message.style.display = 'block';
-     setTimeout(() => message.style.display = 'none', 3000);
-   }
-
-   // Backup system (save state before critical operations)
-   setInterval(() => {
-     backupCustomers = [...customers];
-   }, 10000); // Auto-backup every 10 seconds
-
-  const order = {
-    supplierName,
-    orderType,
-    orderAmount,
-    orderRate,
-    paidAmount,
-    status: paidAmount < orderAmount * orderRate ? 'Unpaid' : 'Paid'
-  };
-  orders.push(order);
-
-  updateUnpaidOrders();
-  orderForm.reset();
-});
-
-// Add Transaction
-transactionForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const customerName = document.getElementById('transactionCustomer').value;
-  const transactionType = document.getElementById('transactionType').value;
-  const transactionMethod = document.getElementById('transactionMethod').value;
-  const amount = parseFloat(document.getElementById('amount').value);
-  const receiver = document.getElementById('receiverName').value;
-
-  // Validate receiver for transfers
-  if (transactionType === 'Transfer' && !receiver) {
-    alert('Please enter a receiver name for transfers.');
-    return;
-  }
-
-  // Update customer balances
-  const sender = customers.find(c => c.name === customerName);
-  const receiverCustomer = customers.find(c => c.name === receiver);
-
-  if (transactionType === 'Deposit') {
-    sender.balance += amount;
-  } else if (transactionType === 'Withdrawal') {
-    if (sender.balance < amount) {
-      alert('Insufficient balance for withdrawal.');
-      return;
-    }
-    sender.balance -= amount;
-  } else if (transactionType === 'Transfer') {
-    if (sender.balance < amount) {
-      alert('Insufficient balance for transfer.');
-      return;
-    }
-    sender.balance -= amount;
-    receiverCustomer.balance += amount;
-  }
-
-  // Add to transactions
-  const transaction = {
-    date: new Date().toLocaleDateString(),
-    customerName,
-    type: transactionType,
-    method: transactionMethod,
-    amount,
-    receiverName: transactionType === 'Transfer' ? receiver : null
-  };
-  transactions.push(transaction);
-
-  // Update UI
-  updateTransactionTable();
-  updateBalance();
-  updateReport();
-  transactionForm.reset();
-});
-
-// Update Unpaid Orders
-function updateUnpaidOrders() {
-  const unpaid = orders.filter(order => order.status === 'Unpaid').length;
-  unpaidOrders.textContent = unpaid;
-}
-
-// Update Transaction Table
-function updateTransactionTable() {
-  transactionTable.innerHTML = '';
-  transactions.forEach((transaction) => {
-    const row = transactionTable.insertRow();
-    row.innerHTML = `
-      <td>${transaction.date}</td>
-      <td>${transaction.customerName}</td>
-      <td>${transaction.type}</td>
-      <td>${transaction.method}</td>
-      <td>$${transaction.amount.toFixed(2)}</td>
-      <td>${transaction.receiverName || '-'}</td>
-    `;
-  });
-}
-
-// Update Balance
-function updateBalance() {
-  const balance = customers.reduce((total, customer) => total + customer.balance, 0);
-  totalBalance.textContent = `$${balance.toFixed(2)}`;
-}
-
-// Update Report
-function updateReport() {
-  const deposits = transactions.filter(t => t.type === 'Deposit').reduce((sum, t) => sum + t.amount, 0);
-  const withdrawals = transactions.filter(t => t.type === 'Withdrawal').reduce((sum, t) => sum + t.amount, 0);
-  const transfers = transactions.filter(t => t.type === 'Transfer').reduce((sum, t) => sum + t.amount, 0);
-
-  totalDeposits.textContent = `$${deposits.toFixed(2)}`;
-  totalWithdrawals.textContent = `$${withdrawals.toFixed(2)}`;
-  totalTransfers.textContent = `$${transfers.toFixed(2)}`;
-
-  updateChart();
-}
-
-// Chart for Analysis
-let transactionChart;
-function updateChart() {
-  const labels = ['Deposits', 'Withdrawals', 'Transfers'];
-  const data = [
-    transactions.filter(t => t.type === 'Deposit').length,
-    transactions.filter(t => t.type === 'Withdrawal').length,
-    transactions.filter(t => t.type === 'Transfer').length
-  ];
-
-  if (transactionChart) {
-    transactionChart.destroy();
-  }
-
-  transactionChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Transaction Types',
-        data: data,
-        backgroundColor: ['#4CAF50', '#FF5252', '#FFC107'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+      function displaySearchResults(results) {
+        searchResults.innerHTML = '';
+        if (results.length === 0) {
+          searchResults.style.display = 'none';
+          return;
         }
-      }
-    }
-  });
-}
 
-// Initial Load
-loadCustomers(); // Load customers from localStorage
-updateTransactionTable();
-updateBalance();
-updateReport();
-updateUnpaidOrders();
+        results.forEach(customer => {
+          const item = document.createElement('div');
+          item.classList.add('search-result-item');
+          item.textContent = customer.name;
+          item.addEventListener('click', () => {
+            selectCustomer(customer);
+            searchResults.style.display = 'none';
+            searchInput.value = '';
+          });
+          searchResults.appendChild(item);
+        });
+
+        searchResults.style.display = 'block';
+      }
+
+      function selectCustomer(customer) {
+        currentCustomer = customer;
+        customerNameDisplay.textContent = customer.name;
+        customerBalanceDisplay.textContent = `$${customer.balance.toFixed(2)}`;
+        showCustomerBalanceSection();
+      }
+
+      function showCustomerBalanceSection() {
+        document.getElementById('customerBalanceSection').style.display = 'block';
+      }
+
+      // --- Customer Form Functions ---
+      function clearForm() {
+        customerNameInput.value = '';
+        customerContactInput.value = '';
+        customerEmailInput.value = '';
+        customerAddressInput.value = '';
+        initialBalanceInput.value = '';
+      }
+
+      function populateForm(customer) {
+        customerNameInput.value = customer.name;
+        customerContactInput.value = customer.contact;
+        customerEmailInput.value = customer.email || '';
+        customerAddressInput.value = customer.address || '';
+        initialBalanceInput.value = customer.balance.toFixed(2);
+      }
+
+      function showMessage(message, isError = false) {
+        messageDisplay.textContent = message;
+        messageDisplay.style.color = isError ? 'red' : 'green';
+        messageDisplay.style.display = 'block';
+        setTimeout(() => {
+          messageDisplay.style.display = 'none';
+        }, 3000);
+      }
+
+      // --- Button Event Listeners ---
+      editCustomerButton.addEventListener('click', () => {
+        if (currentCustomer) {
+          formTitle.textContent = 'Edit Customer';
+          populateForm(currentCustomer);
+          updateCustomerButton.style.display = 'inline-block';
+          cancelEditButton.style.display = 'inline-block';
+          registerButton.style.display = 'none';
+          document.querySelector('.form-container').style.display = 'block';
+        } else {
+          showMessage('No customer selected.', true);
+        }
+      });
+
+      cancelEditButton.addEventListener('click', () => {
+        clearForm();
+        formTitle.textContent = 'Register Customer';
+        updateCustomerButton.style.display = 'none';
+        cancelEditButton.style.display = 'none';
+        registerButton.style.display = 'inline-block';
+        document.querySelector('.form-container').style.display = 'none';
+      });
+
+      registerButton.addEventListener('click', () => {
+        const newCustomer = {
+          id: customers.length + 1,
+          name: customerNameInput.value,
+          contact: customerContactInput.value,
+          email: customerEmailInput.value,
+          address: customerAddressInput.value,
+          balance: parseFloat(initialBalanceInput.value),
+        };
+
+        customers.push(newCustomer);
+        updateCustomerBalanceList();
+        showMessage('Customer registered successfully!');
+        clearForm();
+      });
+
+      updateCustomerButton.addEventListener('click', () => {
+        if (currentCustomer) {
+          currentCustomer.name = customerNameInput.value;
+          currentCustomer.contact = customerContactInput.value;
+          currentCustomer.email = customerEmailInput.value;
+          currentCustomer.address = customerAddressInput.value;
+          currentCustomer.balance = parseFloat(initialBalanceInput.value);
+
+          customerNameDisplay.textContent = currentCustomer.name;
+          customerBalanceDisplay.textContent = `$${currentCustomer.balance.toFixed(2)}`;
+          updateCustomerBalanceList();
+          showMessage('Customer updated successfully!');
+          cancelEditButton.click(); // Hide the form
+        } else {
+          showMessage('No customer selected.', true);
+        }
+      });
+
+      // --- Summary Section Updates ---
+      function updateTotalBalance() {
+        const totalBalance = customers.reduce((sum, customer) => sum + customer.balance, 0);
+        totalBalanceDisplay.textContent = `$${totalBalance.toFixed(2)}`;
+      }
+
+      function updateUnpaidOrders() {
+        // This is placeholder logic; replace with actual unpaid orders calculation
+        unpaidOrdersDisplay.textContent = '0';
+      }
+
+      function updateTotalTransactions() {
+        // This is placeholder logic; replace with actual transaction count
+        totalTransactionsDisplay.textContent = '0';
+      }
+
+      // --- Customer Balances List ---
+      function updateCustomerBalanceList() {
+        customerBalanceList.innerHTML = '';
+        customers.forEach(customer => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${customer.name}: $${customer.balance.toFixed(2)}`;
+          customerBalanceList.appendChild(listItem);
+        });
+        updateTotalBalance();
+      }
+
+      // --- Transaction Handling ---
+      transactionForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const transactionCustomer = document.getElementById('transactionCustomer').value;
+        const transactionType = document.getElementById('transactionType').value;
+        const transactionMethod = document.getElementById('transactionMethod').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const receiverName = document.getElementById('receiverName').value;
+
+        // Basic validation
+        if (!transactionCustomer || isNaN(amount)) {
+          alert('Please fill out all required fields.');
+          return;
+        }
+
+        // Create transaction object
+        const newTransaction = {
+          date: new Date().toLocaleDateString(),
+          customer: transactionCustomer,
+          type: transactionType,
+          method: transactionMethod,
+          amount: amount,
+          receiver: receiverName,
+        };
+
+        // Add transaction to table
+        addTransactionToTable(newTransaction);
+
+        // Update transaction report
+        updateTransactionReport();
+
+        // Clear form
+        transactionForm.reset();
+      });
+
+      function addTransactionToTable(transaction) {
+        const row = transactionTableBody.insertRow();
+        row.insertCell().textContent = transaction.date;
+        row.insertCell().textContent = transaction.customer;
+        row.insertCell().textContent = transaction.type;
+        row.insertCell().textContent = transaction.method;
+        row.insertCell().textContent = transaction.amount;
+        row.insertCell().textContent = transaction.receiver || '-';
+      }
+
+      // --- Transaction Report ---
+      function updateTransactionReport() {
+        let totalDeposits = 0;
+        let totalWithdrawals = 0;
+        let totalTransfers = 0;
+
+        // Example data (replace with actual transaction data)
+        const transactions = [
+          { type: 'Deposit', amount: 100 },
+          { type: 'Withdrawal', amount: 50 },
+          { type: 'Transfer', amount: 25 },
+          { type: 'Deposit', amount: 75 },
+        ];
+
+        transactions.forEach(transaction => {
+          switch (transaction.type) {
+            case 'Deposit':
+              totalDeposits += transaction.amount;
+              break;
+            case 'Withdrawal':
+              totalWithdrawals += transaction.amount;
+              break;
+            case 'Transfer':
+              totalTransfers += transaction.amount;
+              break;
+          }
+        });
+
+        totalDepositsDisplay.textContent = `$${totalDeposits.toFixed(2)}`;
+        totalWithdrawalsDisplay.textContent = `$${totalWithdrawals.toFixed(2)}`;
+        totalTransfersDisplay.textContent = `$${totalTransfers.toFixed(2)}`;
+
+        // Update chart
+        updateTransactionChart(totalDeposits, totalWithdrawals, totalTransfers);
+      }
+
+      let transactionChart;
+
+      function updateTransactionChart(deposits, withdrawals, transfers) {
+        if (transactionChart) {
+          transactionChart.destroy(); // Destroy existing chart
+        }
+
+        const ctx = transactionChartCanvas.getContext('2d');
+        transactionChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Deposits', 'Withdrawals', 'Transfers'],
+            datasets: [{
+              label: 'Transaction Amounts',
+              data: [deposits, withdrawals, transfers],
+              backgroundColor: [
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 205, 86, 0.2)',
+              ],
+              borderColor: [
+                'rgb(75, 192, 192)',
+                'rgb(255, 99, 132)',
+                'rgb(255, 205, 86)',
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+      // --- Initialize ---
+      updateTotalBalance();
+      updateUnpaidOrders();
+      updateTotalTransactions();
+      updateCustomerBalanceList();
+      updateTransactionReport();
+    });

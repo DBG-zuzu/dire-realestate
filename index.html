@@ -1,260 +1,184 @@
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amana Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <h1>Amana Dashboard</h1>
-    </header>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Amana Dashboard</title>
+      <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+      <div class="container">
+        <!-- Header -->
+        <header>
+          <h1>Amana Dashboard</h1>
+        </header>
 
-    <!-- Search and Customer Balance Section -->
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search by Name or Contact">
-      <div id="searchResults" class="search-results"></div>
-    </div>
-    <div id="customerBalanceSection" class="customer-balance" style="display: none;">
-      <h2>Customer Details</h2>
-      <p><strong>Name:</strong> <span id="customerNameDisplay"></span></p>
-      <p><strong>Balance:</strong> <span id="customerBalanceDisplay">$0.00</span></p>
-      <div class="button-group">
-        <button id="editCustomerButton">Edit Customer</button>
-        <button id="restoreCustomerButton">Restore Backup</button>
-      </div>
-    </div>
-
-    <!-- Customer Registration/Edit Form -->
-    <div class="form-container">
-      <h2 id="formTitle">Register Customer</h2>
-      <form id="customerForm">
-        <label for="customerName">Customer Name:</label>
-        <input type="text" id="customerName" required>
-
-        <label for="customerContact">Contact:</label>
-        <input type="text" id="customerContact" required>
-
-        <label for="customerEmail">Email:</label>
-        <input type="email" id="customerEmail">
-
-        <label for="customerAddress">Address:</label>
-        <input type="text" id="customerAddress">
-
-        <label for="initialBalance">Initial Balance:</label>
-        <input type="number" id="initialBalance" min="0" step="0.01" required>
-
-        <div class="button-group">
-          <button type="submit" id="registerButton">Register</button>
-          <button type="button" id="updateCustomerButton" style="display: none;">Update</button>
-          <button type="button" id="cancelEditButton" style="display: none;">Cancel</button>
+        <!-- Search and Customer Balance Section -->
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search by Name or Contact">
+          <div id="searchResults" class="search-results"></div>
         </div>
-      </form>
-      <p id="message" style="display: none;"></p>
-    </div>
+        <div id="customerBalanceSection" class="customer-balance">
+          <h2>Customer Details</h2>
+          <p><strong>Name:</strong> <span id="customerNameDisplay"></span></p>
+          <p><strong>Balance:</strong> <span id="customerBalanceDisplay">$0.00</span></p>
+          <div class="button-group">
+            <button id="editCustomerButton">Edit Customer</button>
+            <button id="restoreCustomerButton">Restore Backup</button>
+          </div>
+        </div>
 
-    <!-- Summary Section -->
-    <div class="summary">
-      <div class="summary-item">
-        <h3>Total Balance</h3>
-        <p id="totalBalance">$0.00</p>
+        <!-- Customer Registration/Edit Form -->
+        <div class="form-container">
+          <h2 id="formTitle">Register Customer</h2>
+          <form id="customerForm">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" required>
+
+            <label for="customerContact">Contact:</label>
+            <input type="text" id="customerContact" required>
+
+            <label for="customerEmail">Email:</label>
+            <input type="email" id="customerEmail">
+
+            <label for="customerAddress">Address:</label>
+            <input type="text" id="customerAddress">
+
+            <label for="initialBalance">Initial Balance:</label>
+            <input type="number" id="initialBalance" min="0" step="0.01" required>
+
+            <div class="button-group">
+              <!-- Change registerButton to type button -->
+              <button type="button" id="registerButton">Register</button>
+              <button type="button" id="updateCustomerButton">Update</button>
+              
+              <button type="button" id="cancelEditButton">Cancel</button>
+            </div>
+          </form>
+          <!-- Message display area -->
+          <p id="message" style="display: none;"></p>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="summary">
+          <div class="summary-item">
+            <h3>Total Balance</h3>
+            <p id="totalBalance">$0.00</p>
+          </div>
+          
+          <div class="summary-item">
+            <h3>Unpaid Orders</h3>
+            <p id="unpaidOrders">0</p>
+          </div>
+          <div class="summary-item">
+            <h3>Total Transactions</h3>
+            <p id="totalTransactions">0</p>
+          </div>
+        </div>
+
+        <!-- Customer Balances Section -->
+        <div class="customer-balances">
+          <h2>Customer Balances</h2>
+          <!-- New section to list customer balances -->
+          <ul id="customerBalanceList"></ul>
+        </div>
+
+
+        <!-- Transaction Form -->
+        <div class="form-container">
+          <h2>Add Transaction</h2>
+          <form id="transactionForm">
+            <label for="transactionCustomer">Customer Name:</label>
+            <input type="text" id="transactionCustomer" required>
+
+            <label for="transactionType">Type:</label>
+            <select id="transactionType" required>
+              <option value="Deposit">Deposit</option>
+              <option value="Withdrawal">Withdrawal</option>
+              <option value="Transfer">Transfer</option>
+            </select>
+
+            <label for="transactionMethod">Method:</label>
+            <select id="transactionMethod" required>
+              <option value="Cash">Cash</option>
+              <option value="TAAJ">TAAJ</option>
+              <option value="Superwallet">Superwallet</option>
+            </select>
+
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" min="0" step="0.01" required>
+
+            <label for="receiverName">Receiver Name (for Transfer):</label>
+            <input type="text" id="receiverName">
+
+            <!-- Button container -->
+            <div class="button-container">
+              <button type="submit">Add Transaction</button>
+              <button type="submit">Edit Transaction</button>
+              <button type="submit">Restore Transaction</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Transaction List -->
+        <div class="transaction-list">
+          <h2>Recent Transactions</h2>
+          <table id="transactionTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Type</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Receiver</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be added dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Report Section -->
+        <div class="report">
+          <h2>Transaction Report</h2>
+          <div class="report-summary">
+            <p>Total Deposits: <span id="totalDeposits">$0.00</span></p>
+            <p>Total Withdrawals: <span id="totalWithdrawals">$0.00</span></p>
+            <p>Total Transfers: <span id="totalTransfers">$0.00</span></p>
+          </div>
+          <canvas id="transactionChart"></canvas>
+        </div>
+
+        <!-- Order Form -->
+        <div class="form-container">
+          <h2>Add Order</h2>
+          <form id="orderForm">
+            <label for="supplierName">Supplier Name:</label>
+            <input type="text" id="supplierName" required>
+
+            <label for="orderType">Order Type:</label>
+            <select id="orderType" required>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
+            </select>
+
+            <label for="orderAmount">Amount (USD):</label>
+            <input type="number" id="orderAmount" min="0" step="0.01" required>
+
+            <label for="orderRate">Rate:</label>
+            <input type="number" id="orderRate" min="0" step="0.01" required>
+
+            <label for="paidAmount">Paid Amount:</label>
+            <input type="number" id="paidAmount" min="0" step="0.01" required>
+
+            <button type="submit">Add Order</button>
+          </form>
+        </div>
       </div>
-      <div class="summary-item">
-        <h3>Unpaid Orders</h3>
-        <p id="unpaidOrders">0</p>
-      </div>
-      <div class="summary-item">
-        <h3>Total Transactions</h3>
-        <p id="totalTransactions">0</p>
-      </div>
-    </div>
 
-    <!-- Transaction Form -->
-    <div class="form-container">
-      <h2>Add Transaction</h2>
-      <form id="transactionForm">
-        <label for="transactionCustomer">Customer Name:</label>
-        <input type="text" id="transactionCustomer" required>
-
-        <label for="transactionType">Type:</label>
-        <select id="transactionType" required>
-          <option value="Deposit">Deposit</option>
-          <option value="Withdrawal">Withdrawal</option>
-          <option value="Transfer">Transfer</option>
-        </select>
-
-        <label for="transactionMethod">Method:</label>
-        <select id="transactionMethod" required>
-          <option value="Cash">Cash</option>
-          <option value="TAAJ">TAAJ</option>
-          <option value="Superwallet">Superwallet</option>
-        </select>
-
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" min="0" step="0.01" required>
-
-        <label for="receiverName">Receiver Name (for Transfer):</label>
-        <input type="text" id="receiverName">
-
-        <button type="submit">Add Transaction</button>
-      </form>
-    </div>
-
-    <!-- Transaction List -->
-    <div class="transaction-list">
-      <h2>Recent Transactions</h2>
-      <table id="transactionTable">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Customer</th>
-            <th>Type</th>
-            <th>Method</th>
-            <th>Amount</th>
-            <th>Receiver</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Rows will be added dynamically -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Report Section -->
-    <div class="report">
-      <h2>Transaction Report</h2>
-      <div class="report-summary">
-        <p>Total Deposits: <span id="totalDeposits">$0.00</span></p>
-        <p>Total Withdrawals: <span id="totalWithdrawals">$0.00</span></p>
-        <p>Total Transfers: <span id="totalTransfers">$0.00</span></p>
-      </div>
-      <canvas id="transactionChart"></canvas>
-    </div>
-
-    <!-- Order Form -->
-    <div class="form-container">
-      <h2>Add Order</h2>
-      <form id="orderForm">
-        <label for="supplierName">Supplier Name:</label>
-        <input type="text" id="supplierName" required>
-
-        <label for="orderType">Order Type:</label>
-        <select id="orderType" required>
-          <option value="Buy">Buy</option>
-          <option value="Sell">Sell</option>
-        </select>
-
-        <label for="orderAmount">Amount (USD):</label>
-        <input type="number" id="orderAmount" min="0" step="0.01" required>
-
-        <label for="orderRate">Rate:</label>
-        <input type="number" id="orderRate" min="0" step="0.01" required>
-
-        <label for="paidAmount">Paid Amount:</label>
-        <input type="number" id="paidAmount" min="0" step="0.01" required>
-
-        <button type="submit">Add Order</button>
-      </form>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="script.js"></script>
-  <script>
-    // JavaScript for Customer Registration, Update, and Search
-    const customerForm = document.getElementById('customerForm');
-    const updateCustomerButton = document.getElementById('updateCustomerButton');
-    const cancelEditButton = document.getElementById('cancelEditButton');
-    const registerButton = document.getElementById('registerButton');
-    const message = document.getElementById('message');
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const customerBalanceSection = document.getElementById('customerBalanceSection');
-    const customerNameDisplay = document.getElementById('customerNameDisplay');
-    const customerBalanceDisplay = document.getElementById('customerBalanceDisplay');
-
-    let customers = [];
-    let currentCustomerIndex = -1;
-
-    // Register Customer
-    customerForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const customer = {
-        name: document.getElementById('customerName').value,
-        contact: document.getElementById('customerContact').value,
-        email: document.getElementById('customerEmail').value,
-        address: document.getElementById('customerAddress').value,
-        balance: parseFloat(document.getElementById('initialBalance').value),
-      };
-
-      if (currentCustomerIndex === -1) {
-        customers.push(customer);
-        message.textContent = 'Customer registered successfully!';
-      } else {
-        customers[currentCustomerIndex] = customer;
-        message.textContent = 'Customer updated successfully!';
-        currentCustomerIndex = -1;
-        updateCustomerButton.style.display = 'none';
-        cancelEditButton.style.display = 'none';
-        registerButton.style.display = 'inline-block';
-      }
-
-      message.style.display = 'block';
-      customerForm.reset();
-    });
-
-    // Edit Customer
-    editCustomerButton.addEventListener('click', function () {
-      const customerName = customerNameDisplay.textContent;
-      const customer = customers.find(c => c.name === customerName);
-      if (customer) {
-        document.getElementById('customerName').value = customer.name;
-        document.getElementById('customerContact').value = customer.contact;
-        document.getElementById('customerEmail').value = customer.email;
-        document.getElementById('customerAddress').value = customer.address;
-        document.getElementById('initialBalance').value = customer.balance;
-        currentCustomerIndex = customers.indexOf(customer);
-        updateCustomerButton.style.display = 'inline-block';
-        cancelEditButton.style.display = 'inline-block';
-        registerButton.style.display = 'none';
-      }
-    });
-
-    // Cancel Edit
-    cancelEditButton.addEventListener('click', function () {
-      customerForm.reset();
-      currentCustomerIndex = -1;
-      updateCustomerButton.style.display = 'none';
-      cancelEditButton.style.display = 'none';
-      registerButton.style.display = 'inline-block';
-    });
-
-    // Search Customer
-    searchInput.addEventListener('input', function () {
-      const query = searchInput.value.toLowerCase();
-      searchResults.innerHTML = '';
-      if (query.length > 0) {
-        const filteredCustomers = customers.filter(customer =>
-          customer.name.toLowerCase().includes(query) || customer.contact.includes(query)
-        );
-        filteredCustomers.forEach(customer => {
-          const div = document.createElement('div');
-          div.textContent = `${customer.name} (${customer.contact})`;
-          div.classList.add('search-result-item');
-          div.addEventListener('click', () => {
-            customerNameDisplay.textContent = customer.name;
-            customerBalanceDisplay.textContent = `$${customer.balance.toFixed(2)}`;
-            customerBalanceSection.style.display = 'block';
-            searchResults.innerHTML = '';
-            searchInput.value = '';
-          });
-          searchResults.appendChild(div);
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+      <script type="module" src="script.js"></script>
+    </body>
+    </html>
