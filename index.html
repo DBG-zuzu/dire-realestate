@@ -25,9 +25,9 @@
           <p><strong>Balance:</strong> <span id="customerBalanceDisplay">$0.00</span></p>
           <p><strong>Last Transaction:</strong> <span id="lastTransactionDisplay">N/A</span></p> <!-- New line -->
           <div class="button-group">
-            <button id="editCustomerButton">Edit Customer</button>
-            <button id="clearDataButton">Clear Data</button>
-            <button id="viewHistoryButton">View History</button> <!-- New button -->
+            <button type="button" id="editCustomerButton">Edit Customer</button>
+            <button type="button" id="clearDataButton">Clear Data</button>
+            <button type="button" id="viewHistoryButton">View History</button> <!-- New button -->
           </div>
         </div>
 
@@ -115,7 +115,7 @@
 
             <!-- Button container -->
             <div class="button-container">
-              <button type="submit">Add Transaction</button>
+              <button type="button">Add Transaction</button>
             </div>
           </form>
         </div>
@@ -134,7 +134,7 @@
                 <th>Receiver</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="transactionTableBody">
               <!-- Rows will be added dynamically -->
             </tbody>
           </table>
@@ -146,7 +146,7 @@
           <ul id="transactionHistoryList">
             <!-- Transaction history items will be added here -->
           </ul>
-          <button id="hideHistoryButton">Hide History</button>
+          <button type="button" id="hideHistoryButton">Hide History</button>
         </div>
 
         <!-- Report Section -->
@@ -182,11 +182,12 @@
             <label for="paidAmount">Paid Amount:</label>
             <input type="number" id="paidAmount" min="0" step="0.01" required>
 
-            <button type="submit">Add Order</button>
+            <button type="button">Add Order</button>
           </form>
         </div>
       </div>
 
-      <script type="module" src="script.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="script.js"></script>
     </body>
     </html>

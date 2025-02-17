@@ -1,16 +1,26 @@
 {
-  "name": "amana-dashboard",
+  "name": "dashboard",
   "version": "1.0.0",
-  "description": "Amana Dashboard with Responsive Design and Interactivity",
+  "description": "Amana Dashboard",
+  "main": "script.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
   },
   "dependencies": {
-    "chart.js": "^4.4.2"
+    "chart.js": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vite": "^4.0.0"
   },
   "devDependencies": {
-    "vite": "^5.1.4"
-  }
+    "@vitejs/plugin-react": "^4.2.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
+      
+
+<div class="__boltArtifact__" data-message-id="msg-HBYq47u2v6MqP1SC5BK5Gsmr"></div>
