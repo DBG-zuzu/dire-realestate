@@ -1,4 +1,4 @@
-/* styles.css */
+/* General Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -12,15 +12,6 @@ body {
   margin: auto;
   overflow: hidden;
   padding: 20px;
-}
-
-header {
-  background: #505050;
-  color: white;
-  padding-top: 30px;
-  min-height: 70px;
-  border-bottom: 3px solid #e8491d;
-  text-align: center;
 }
 
 /* Search Bar */
@@ -123,6 +114,7 @@ header {
   cursor: pointer;
   font-size: 16px;
   margin-top: 10px;
+  transition: background-color 0.3s ease;
 }
 
 .form-container button:hover {
@@ -263,8 +255,8 @@ header {
 .button-group {
   display: flex;
   gap: 10px;
-  justify-content: flex-start; /* Aligns buttons to the start */
-  align-items: center; /* Vertically centers buttons */
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .button-group button {
@@ -275,11 +267,151 @@ header {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  transition: background-color 0.3s ease;
 }
 
 .button-group button:hover {
-  background-color: #e8491d; /* Change background color on hover */
+  background-color: #e8491d;
+}
+
+/* Button Container */
+.button-container {
+  text-align: center;
+}
+
+.button-container button {
+  margin: 20px auto;
+  display: block;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  padding: 15px 20px;
+  color: white;
+  height: 70px;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 25%;
+  text-align: left;
+}
+
+.navbar-nav {
+  list-style: none;
+  display: flex;
+  width: 75%;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link.active {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  background-color: #444;
+  border-radius: 5px;
+}
+
+/* Sections */
+.section {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.section.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Settings Section */
+.settings-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.setting-item {
+  margin-bottom: 20px;
+}
+
+.setting-item h3 {
+  margin-bottom: 10px;
+}
+
+.setting-item select,
+.setting-item input[type="checkbox"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.setting-item button {
+  background-color: #505050;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.setting-item button:hover {
+  background-color: #e8491d;
+}
+
+/* Dark Theme */
+.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-theme .navbar {
+  background-color: #1f1f1f;
+}
+
+.dark-theme .form-container,
+.dark-theme .customer-balance,
+.dark-theme .customer-balances,
+.dark-theme .transaction-list,
+.dark-theme .transaction-history,
+.dark-theme .report {
+  background-color: #1f1f1f;
+  color: #ffffff;
+  border-color: #333;
+}
+
+.dark-theme input,
+.dark-theme select,
+.dark-theme button {
+  background-color: #333;
+  color: #ffffff;
+  border-color: #444;
+}
+
+.dark-theme button:hover {
+  background-color: #e8491d;
 }
 
 /* Responsive Design */
@@ -297,31 +429,32 @@ header {
   .summary-item {
     margin-bottom: 10px;
   }
-}
 
-/* General Button Style */
-button {
-  background-color: #505050;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
-}
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
 
-button:hover {
-  background-color: #e8491d;
-}
+  .navbar-brand {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-/* Button container */
-.button-container {
-  text-align: center; /* Center the button */
-}
+  .navbar-nav {
+    width: 100%;
+    justify-content: center;
+    gap: 5px;
+  }
 
-.button-container button {
-  margin: 20px auto; /* Add margin above and below, and center horizontally */
-  display: block; /* Make the button a block element */
+  .nav-link {
+    width: auto;
+    padding: 8px 10px;
+  }
+
+  .form-container input,
+  .form-container select {
+    width: 100%;
+  }
 }
