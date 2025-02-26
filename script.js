@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   let customers = [];
   let totalBalance = 0;
   let totalDeposits = 0;
@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to update the transaction report
   function updateTransactionReport() {
-    document.getElementById('totalDeposits').textContent = '$' + totalDeposits.toFixed(2);
-    document.getElementById('totalWithdrawals').textContent = '$' + totalWithdrawals.toFixed(2);
-    document.getElementById('totalTransfers').textContent = '$' + totalTransfers.toFixed(2);
+    document.getElementById('totalDeposit').textContent = '$' + totalDeposits.toFixed(2);
+    document.getElementById('totalTransfer').textContent = '$' + totalTransfers.toFixed(2);
+    document.getElementById('totalWithdraw').textContent = '$' + totalWithdrawals.toFixed(2);
   }
 
   // Function to render the chart
@@ -84,14 +84,14 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Customer Registration/Edit Form buttons
-  document.getElementById('registerButton').addEventListener('click', function() {
+  document.getElementById('registerButton').addEventListener('click', function () {
     const customerName = document.getElementById('customerName').value;
     const customerContact = document.getElementById('customerContact').value;
     const customerEmail = document.getElementById('customerEmail').value;
     const customerAddress = document.getElementById('customerAddress').value;
-    const initialBalance = parseFloat(document.getElementById('initialBalance').value);
+    const initialDeposit = parseFloat(document.getElementById('initialBalance').value);
 
-    if (!customerName || !customerContact || isNaN(initialBalance)) {
+    if (!customerName || !customerContact || isNaN(initialDeposit)) {
       alert('Please fill in all required fields.');
       return;
     }
@@ -103,19 +103,37 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    // Create customer object
     const customer = {
       name: customerName,
       contact: customerContact,
       email: customerEmail,
       address: customerAddress,
-      balance: initialBalance
+      balance: initialDeposit
     };
 
+    // Add customer to the list
     customers.push(customer);
-    totalBalance += initialBalance;
+    totalBalance += initialDeposit;
 
+    // Add initial deposit as a transaction
+    const initialTransaction = {
+      customerName: customerName,
+      type: 'Deposit',
+      method: 'Cash', // Default method for initial deposit
+      amount: initialDeposit,
+      receiverName: null
+    };
+
+    transactions.push(initialTransaction);
+    totalDeposits += initialDeposit;
+
+    // Update UI
     updateTotalBalance();
     displayCustomerBalances();
+    addTransactionToTable(initialTransaction);
+    updateTransactionReport();
+    renderChart();
 
     // Clear the form
     document.getElementById('customerForm').reset();
@@ -123,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Transaction Form button
   const addTransactionButton = document.querySelector('#transactionForm .button-container button');
-  addTransactionButton.addEventListener('click', function() {
+  addTransactionButton.addEventListener('click', function () {
     const transactionCustomerName = document.getElementById('transactionCustomer').value;
     const transactionType = document.getElementById('transactionType').value;
     const transactionMethod = document.getElementById('transactionMethod').value;
@@ -181,39 +199,48 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('transactionForm').reset();
   });
 
+  // View History Button
+  document.getElementById('viewHistoryButton').addEventListener('click', function () {
+    const searchInput = document.getElementById('searchInput').value.trim();
+    if (!searchInput) {
+      alert('Please enter a customer name or contact to search.');
+      return;
+    }
+
+    // Find the customer
+    const customer = customers.find(c => c.name === searchInput || c.contact === searchInput);
+    if (!customer) {
+      alert('Customer not found.');
+      return;
+    }
+
+    // Filter transactions for the customer
+    const customerTransactions = transactions.filter(t => t.customerName === customer.name);
+
+    // Display transaction history
+    const transactionHistoryList = document.getElementById('transactionHistoryList');
+    transactionHistoryList.innerHTML = ''; // Clear existing history
+
+    if (customerTransactions.length === 0) {
+      transactionHistoryList.innerHTML = '<li>No transactions found for this customer.</li>';
+    } else {
+      customerTransactions.forEach(transaction => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${transaction.type} (${transaction.method}): $${transaction.amount.toFixed(2)}`;
+        transactionHistoryList.appendChild(listItem);
+      });
+    }
+
+    // Show the transaction history section
+    document.getElementById('transactionHistorySection').style.display = 'block';
+  });
+
+  // Hide History Button
+  document.getElementById('hideHistoryButton').addEventListener('click', function () {
+    document.getElementById('transactionHistorySection').style.display = 'none';
+  });
+
   // Initial chart render
   updateTransactionReport();
   renderChart();
-
-  // Customer Balance Section buttons
-  document.getElementById('editCustomerButton').addEventListener('click', function() {
-    alert('Edit Customer button clicked');
-  });
-
-  document.getElementById('clearDataButton').addEventListener('click', function() {
-    alert('Clear Data button clicked');
-  });
-
-  document.getElementById('viewHistoryButton').addEventListener('click', function() {
-    alert('View History button clicked');
-  });
-
-  document.getElementById('updateCustomerButton').addEventListener('click', function() {
-    alert('Update button clicked');
-  });
-
-  document.getElementById('cancelEditButton').addEventListener('click', function() {
-    alert('Cancel button clicked');
-  });
-
-  // Transaction History Section button
-  document.getElementById('hideHistoryButton').addEventListener('click', function() {
-    alert('Hide History button clicked');
-  });
-
-  // Order Form button
-  const addOrderButton = document.querySelector('#orderForm button');
-  addOrderButton.addEventListener('click', function() {
-    alert('Add Order button clicked');
-  });
 });
