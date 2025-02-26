@@ -2,10 +2,12 @@
   "name": "dire-realestate",
   "version": "1.0.0",
   "description": "Dire-realestate is a real estate company registered under Dire Business Group and provides houses to rent and sell.",
-  "main": "index.js",
+  "entry point": "index.js",
   "scripts": {
     "build": "echo 'No build script specified'"
   },
+  "test command": "",
+  "keywords": "",
   "author": "DBG-zuzu",
   "license": "ISC",
   "dependencies": {}
